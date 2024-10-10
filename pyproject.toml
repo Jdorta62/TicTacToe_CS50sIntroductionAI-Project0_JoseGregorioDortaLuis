@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "tictactoe-cs50sintroductionai-project0-josegregoriodortaluis"
+version = "0.1.0"
+description = ""
+authors = ["Jdorta62 <alu0101414676@ull.edu.es>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pygame = "^2.6.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
