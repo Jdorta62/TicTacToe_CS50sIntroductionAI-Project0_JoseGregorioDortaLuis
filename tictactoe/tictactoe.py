@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
@@ -22,42 +23,77 @@ def player(board):
     """
     Returns player who has the next turn on a board.
     """
-    raise NotImplementedError
+    empty_count = sum(row.count(EMPTY) for row in board)
+    return O if empty_count % 2 == 0 else X
+    
 
 
 def actions(board):
     """
     Returns set of all possible actions (i, j) available on the board.
     """
-    raise NotImplementedError
+    return {(i, j) for i in range(3) for j in range(3) if board[i][j] == EMPTY}
 
 
 def result(board, action):
     """
     Returns the board that results from making move (i, j) on the board.
     """
-    raise NotImplementedError
+    if action not in actions(board):
+        raise Exception("Acción inválida: la posición no está disponible en el tablero.")
+    current_player = player(board)
+    new_board = copy.deepcopy(board)
+    new_board[action[0]][action[1]] = current_player
+
+    return new_board
 
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
-    raise NotImplementedError
+    # Lista de todas las combinaciones posibles de victoria (filas, columnas y diagonales)
+    winning_combinations = [
+        # Filas
+        [(0, 0), (0, 1), (0, 2)],
+        [(1, 0), (1, 1), (1, 2)],
+        [(2, 0), (2, 1), (2, 2)],
+        # Columnas
+        [(0, 0), (1, 0), (2, 0)],
+        [(0, 1), (1, 1), (2, 1)],
+        [(0, 2), (1, 2), (2, 2)],
+        # Diagonales
+        [(0, 0), (1, 1), (2, 2)],
+        [(0, 2), (1, 1), (2, 0)]
+    ]
+
+    # Verifica si alguna combinación ganadora tiene el mismo jugador en todas las posiciones
+    for combination in winning_combinations:
+        first_cell = board[combination[0][0]][combination[0][1]]
+        if first_cell is not None and all(board[i][j] == first_cell for i, j in combination):
+            return first_cell
+
+    # Si no hay ganador, retorna None
+    return None
 
 
 def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
-    raise NotImplementedError
+    return winner(board) is not None or sum(row.count(EMPTY) for row in board) == 0
 
 
 def utility(board):
     """
     Returns 1 if X has won the game, -1 if O has won, 0 otherwise.
     """
-    raise NotImplementedError
+    winner_player = winner(board)
+    if winner_player == X:
+        return 1
+    if winner_player == O:
+        return -1
+    return 0
 
 
 def minimax(board):
