@@ -100,4 +100,48 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    if terminal(board):
+        return None  # No hay acción posible en un tablero terminal
+
+    current_player = player(board)
+
+    if current_player == X:
+        # Maximizar para X
+        max_utility = -math.inf
+        optimal_action = None
+        for action in actions(board):
+            action_utility = min_value(result(board, action))
+            if action_utility > max_utility:
+                max_utility = action_utility
+                optimal_action = action
+        return optimal_action
+    else:
+        # Minimizar para O
+        min_utility = math.inf
+        optimal_action = None
+        for action in actions(board):
+            action_utility = max_value(result(board, action))
+            if action_utility < min_utility:
+                min_utility = action_utility
+                optimal_action = action
+        return optimal_action
+
+def max_value(board):
+    # Caso base: si el juego terminó, retorna la utilidad del tablero
+    if terminal(board):
+        return utility(board)
+    max_utility = -math.inf
+    for action in actions(board):
+        # Calcula el valor mínimo que el oponente puede obtener en el siguiente turno
+        max_utility = max(max_utility, min_value(result(board, action)))
+    return max_utility
+
+def min_value(board):
+    # Caso base: si el juego terminó, retorna la utilidad del tablero
+    if terminal(board):
+        return utility(board)
+    min_utility = math.inf
+    for action in actions(board):
+        # Calcula el valor máximo que el oponente puede obtener en el siguiente turno
+        min_utility = min(min_utility, max_value(result(board, action)))
+    return min_utility
